@@ -85,18 +85,18 @@ Go to **Settings → Failure Detection**.
 - **Enable toggle** — turns the detection service on.
 - **Obico ML API URL** — base URL to your ML API, e.g. `http://192.168.1.10:3333`. Click **Test** to check reachability and the token.
 - **ML API Token** — only needed if your ml_api container runs with `ML_API_TOKEN` set. It must match that value exactly. Leave empty otherwise.
-- **Snapshot address** — set **Snapshot base URL** below, or **External URL** in **Settings → Network**. The chosen address must be reachable from the ML API container.
+- **Bambuddy address** — set **Bambuddy Internal URL** below, or **External URL** in **Settings → Network**. The chosen address must be reachable from the ML API container.
 
-### Optional: use an internal snapshot URL
+### Optional: Bambuddy Internal URL
 
-**Snapshot base URL** lets the ML API fetch snapshots through a different Bambuddy address. Leave it empty to use **External URL**. Other integrations continue to use External URL.
+**Bambuddy Internal URL** lets the ML API fetch snapshots through a different Bambuddy address. Leave it empty to use **External URL**. Other integrations continue to use External URL.
 
 For example, when both containers share a Docker network:
 
 | Setting | Example | Connection |
 |---|---|---|
 | **Obico ML API URL** | `http://obico-ml:3333` | Bambuddy calls the ML API. |
-| **Snapshot base URL** | `http://bambuddy:8000` | The ML API fetches snapshots from Bambuddy. |
+| **Bambuddy Internal URL** | `http://bambuddy:8000` | The ML API fetches snapshots from Bambuddy. |
 | **External URL** (Settings → Network) | `https://bambuddy.example.com` | Other integrations use the public address. |
 
 Use your actual Docker service names and Bambuddy's container port. You can also use a LAN address, such as `http://192.168.1.20:8000`. Include `http://` or `https://` and any required port. `localhost` inside the ML container points to that container, not Bambuddy.
@@ -149,9 +149,9 @@ Hover for the current smoothed score; click to open a modal with the live status
 
 ## Requirements & Gotchas
 
-- **The ML API container must be able to reach the snapshot address.** Use a Docker service name on a shared network or a reachable LAN address.
-- **Set Snapshot base URL or External URL.** Without either, Bambuddy cannot tell the ML API where to fetch snapshots.
-- **Snapshots must be accessible to the ML API without additional proxy authentication.** The cached-image endpoint uses short-lived, single-use URLs and does not require a Bambuddy login. An internal Snapshot base URL can avoid an authenticated public reverse proxy; the snapshots do not need to be exposed to the internet.
+- **The ML API container must be able to reach the configured Bambuddy address.** Use a Docker service name on a shared network or a reachable LAN address.
+- **Set Bambuddy Internal URL or External URL.** Without either, Bambuddy cannot tell the ML API where to fetch snapshots.
+- **Snapshots must be accessible to the ML API without additional proxy authentication.** The cached-image endpoint uses short-lived, single-use URLs and does not require a Bambuddy login. Bambuddy Internal URL can avoid an authenticated public reverse proxy; the snapshots do not need to be exposed to the internet.
 - **The printer camera must be enabled and reachable** — same requirement as Bambuddy's own camera page.
 - **The action fires exactly once per print.** After a detected failure, subsequent frames won't re-trigger until a new print starts.
 - **Calibration prints are automatically skipped** by Bambuddy's detection loop — the service only runs while a print is in the `RUNNING` state.
@@ -161,11 +161,11 @@ Hover for the current smoothed score; click to open a modal with the live status
 
 ## Troubleshooting
 
-**"No snapshot URL configured"**
-: Set **Snapshot base URL** in **Settings → Failure Detection**, or **External URL** in **Settings → Network**, to an address the ML API container can reach.
+**"No Bambuddy Internal URL configured"**
+: Set **Bambuddy Internal URL** in **Settings → Failure Detection**, or **External URL** in **Settings → Network**, to an address the ML API container can reach.
 
 **The Test button succeeds, but detection reports a snapshot error**
-: The ML API may be reachable from Bambuddy while it cannot fetch images in the other direction. Check that the snapshot address resolves and is reachable from the ML API container. If the public address requires proxy authentication, use a reachable internal Snapshot base URL.
+: The ML API may be reachable from Bambuddy while it cannot fetch images in the other direction. Check that the snapshot address resolves and is reachable from the ML API container. If the public address requires proxy authentication, set Bambuddy Internal URL to a reachable address.
 
 **Test button returns an error**
 : Check the ML API is running (`docker compose ps ml_api`) and that port 3333 is exposed. Try `curl` from the Bambuddy host: `curl http://<obico-host>:3333/hc/`.
