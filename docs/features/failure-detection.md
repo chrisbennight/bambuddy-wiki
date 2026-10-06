@@ -101,7 +101,7 @@ For example, when both containers share a Docker network:
 
 Use your actual Docker service names and Bambuddy's container port. You can also use a LAN address, such as `http://192.168.1.20:8000`. Include `http://` or `https://` and any required port. `localhost` inside the ML container points to that container, not Bambuddy.
 
-The field saves automatically. Changes take effect on the next detection cycle without restarting Bambuddy. Clear it to return to External URL.
+The field saves automatically. An address without `http://` or `https://` is marked in red and not saved until it has one. Changes take effect on the next detection cycle without restarting Bambuddy. Clear it to return to External URL.
 
 The **Test** button checks the ML API and token. It does not check whether the ML API can fetch a snapshot; check detection during a print to confirm that connection.
 
@@ -161,7 +161,7 @@ Hover for the current smoothed score; click to open a modal with the live status
 
 ## Troubleshooting
 
-**"No Bambuddy Internal URL configured"**
+**"No address set for the ML API to fetch snapshots from"**
 : Set **Bambuddy Internal URL** in **Settings → Failure Detection**, or **External URL** in **Settings → Network**, to an address the ML API container can reach.
 
 **The Test button succeeds, but detection reports a snapshot error**
